@@ -1,12 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
+from fake_headers import Headers
 
 
 KEYWORDS = ['дизайн', 'фото', 'web', 'python']
 
 
+def generate_header():
+    headers = Headers(os='win', browser='chrome').generate()
+    return headers
+
+
 def get_article(url):
-    response = requests.get(url)
+    response = requests.get(url, headers=generate_header())
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
     return soup.find('article')
@@ -15,7 +21,7 @@ def get_article(url):
 def search_articles(keywords):
     base_url = 'https://habr.com'
     url = f'{base_url}/ru/articles/'
-    response = requests.get(url)
+    response = requests.get(url, headers=generate_header())
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
     snippets = soup.find_all('div', class_='tm-article-snippet')
